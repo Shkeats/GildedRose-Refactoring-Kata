@@ -213,4 +213,42 @@ class GildedRoseTest extends TestCase
         $this->assertSame(4, $items[0]->quality);
         $this->assertSame(44, $items[1]->quality);
     }
+
+    public function test_that_conjured_items_degrade_in_quality_at_2_per_day_before_sell_by_date()
+    {
+        $items = [
+            new Item('Conjured Potato', 5, 10),
+            new Item('Gold Ring (Conjured)', 5, 50),
+        ];
+
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(8, $items[0]->quality);
+        $this->assertSame(48, $items[1]->quality);
+        $gildedRose->updateQuality();
+        $this->assertSame(6, $items[0]->quality);
+        $this->assertSame(46, $items[1]->quality);
+        $gildedRose->updateQuality();
+        $this->assertSame(4, $items[0]->quality);
+        $this->assertSame(44, $items[1]->quality);
+    }
+
+    public function test_that_conjured_items_degrade_in_quality_at_4_per_day_before_after_sell_by_date()
+    {
+        $items = [
+            new Item('Conjured Potato', 1, 10),
+            new Item('Gold Ring (Conjured)', 1, 50),
+        ];
+
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(8, $items[0]->quality);
+        $this->assertSame(48, $items[1]->quality);
+        $gildedRose->updateQuality();
+        $this->assertSame(4, $items[0]->quality);
+        $this->assertSame(44, $items[1]->quality);
+        $gildedRose->updateQuality();
+        $this->assertSame(0, $items[0]->quality);
+        $this->assertSame(40, $items[1]->quality);
+    }
 }
