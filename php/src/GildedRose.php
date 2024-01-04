@@ -18,17 +18,17 @@ final class GildedRose
     public function updateQuality(): void
     {
         foreach ($this->items as $item) {
-            if ($item->name != 'Aged Brie' and $item->name != 'Backstage passes to a TAFKAL80ETC concert') {
+            if (!$this->itemIsAgedBrie($item) and !$this->itemIsBackstagePass($item)) {
                 if ($item->quality > 0) {
-                    if ($item->name != 'Sulfuras, Hand of Ragnaros') {
-                        $qualityDecrease = str_contains($item->name, 'Conjured') ? 2 : 1;
+                    if (!$this->itemIsSulfuras($item)) {
+                        $qualityDecrease = $this->itemIsConjured($item) ? 2 : 1;
                         $item->quality = $item->quality - $qualityDecrease;
                     }
                 }
             } else {
                 if ($item->quality < 50) {
                     $item->quality = $item->quality + 1;
-                    if ($item->name == 'Backstage passes to a TAFKAL80ETC concert') {
+                    if ($this->itemIsBackstagePass($item)) {
                         if ($item->sellIn < 11) {
                             if ($item->quality < 50) {
                                 $item->quality = $item->quality + 1;
@@ -43,16 +43,16 @@ final class GildedRose
                 }
             }
 
-            if ($item->name != 'Sulfuras, Hand of Ragnaros') {
+            if (!$this->itemIsSulfuras($item)) {
                 $item->sellIn = $item->sellIn - 1;
             }
 
             if ($item->sellIn < 0) {
-                if ($item->name != 'Aged Brie') {
-                    if ($item->name != 'Backstage passes to a TAFKAL80ETC concert') {
+                if (!$this->itemIsAgedBrie($item)) {
+                    if (!$this->itemIsBackstagePass($item)) {
                         if ($item->quality > 0) {
-                            if ($item->name != 'Sulfuras, Hand of Ragnaros') {
-                                $qualityDecrease = str_contains($item->name, 'Conjured') ? 2 : 1;
+                            if (!$this->itemIsSulfuras($item)) {
+                                $qualityDecrease = $this->itemIsConjured($item) ? 2 : 1;
                                 $item->quality = $item->quality - $qualityDecrease;
                             }
                         }
@@ -66,5 +66,25 @@ final class GildedRose
                 }
             }
         }
+    }
+
+    private function itemIsAgedBrie(Item $item): bool
+    {
+        return $item->name === 'Aged Brie';
+    }
+
+    private function itemIsBackstagePass(Item $item): bool
+    {
+        return $item->name === 'Backstage passes to a TAFKAL80ETC concert';
+    }
+
+    private function itemIsSulfuras(Item $item): bool
+    {
+        return $item->name === 'Sulfuras, Hand of Ragnaros';
+    }
+
+    private function itemIsConjured(Item $item): bool
+    {
+        return str_contains($item->name, 'Conjured');
     }
 }
