@@ -43,9 +43,7 @@ final class GildedRose
                 }
             }
 
-            if (!$this->itemIsSulfuras($item)) {
-                $item->sellIn = $item->sellIn - 1;
-            }
+           $item->sellIn = $this->calculateItemSellIn($item);
 
             if ($item->sellIn < 0) {
                 if (!$this->itemIsAgedBrie($item)) {
@@ -66,6 +64,10 @@ final class GildedRose
                 }
             }
         }
+    }
+    private function calculateItemSellIn(Item $item): int
+    {
+        return $this->itemIsSulfuras($item) ? $item->sellIn : $item->sellIn -1;
     }
 
     private function itemIsAgedBrie(Item $item): bool
