@@ -49,6 +49,7 @@ class GildedRoseTest extends TestCase
         $gildedRose->updateQuality();
         $this->assertSame(0, $items[0]->quality);
     }
+
     public function test_that_the_quality_of_an_item_cannot_become_negative_when_sell_by_date_has_passed()
     {
         $items = [new Item('foo', 0, 5)];
@@ -73,8 +74,6 @@ class GildedRoseTest extends TestCase
         $this->assertSame(8, $items[0]->quality);
     }
 
-
-
     public function test_that_the_quality_of_an_item_is_never_more_than_50()
     {
         $items = [new Item('foo', 5, 51)];
@@ -83,6 +82,17 @@ class GildedRoseTest extends TestCase
         //Bad input corrected during updateQuality.
         $this->assertSame(50, $items[0]->quality);
     }
+
+    public function test_that_the_sulfuras_item_is_exempt_from_50_quality_rule_and_remains_at_80_quality()
+    {
+        $items = [new Item('Sulfuras, Hand of Ragnaros', 1, 80)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(80, $items[0]->quality);
+        $gildedRose->updateQuality();
+        $this->assertSame(80, $items[0]->quality);
+    }
+
     public function test_that_the_quality_of_an_item_cannot_be_increased_past_50()
     {
         $items = [new Item('Aged Brie', 5, 49)];
@@ -94,7 +104,6 @@ class GildedRoseTest extends TestCase
         $gildedRose->updateQuality();
         $this->assertSame(50, $items[0]->quality);
     }
-
 
     public function test_that_the_sulfuras_item_never_decreases_in_quality()
     {
@@ -168,7 +177,6 @@ class GildedRoseTest extends TestCase
         $this->assertSame(18, $items[0]->quality);
     }
 
-
     public function test_quality_of_backstage_passes_item_drops_to_after_concert()
     {
         $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 2, 1)];
@@ -186,8 +194,4 @@ class GildedRoseTest extends TestCase
         $this->assertSame(-2, $items[0]->sellIn);
         $this->assertSame(0, $items[0]->quality);
     }
-
-
-
-
 }
