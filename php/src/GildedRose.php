@@ -30,10 +30,6 @@ final class GildedRose
 
     private function applyQualityReductions(Item $item): void
     {
-        if ($item->quality < 0) {
-            return;
-        }
-
         if ($this->itemIsAgedBrie($item) || $this->itemIsSulfuras($item) || $this->itemIsBackstagePass($item)) {
             return;
         }
@@ -97,20 +93,22 @@ final class GildedRose
 
     private function handleItemPastSellDate(Item $item): void
     {
-        if (!$this->itemIsAgedBrie($item)) {
-            if (!$this->itemIsBackstagePass($item)) {
-                if ($item->quality > 0) {
-                    if (!$this->itemIsSulfuras($item)) {
-                        $this->applyQualityReductions($item);
-                    }
-                }
-            } else {
-                $item->quality = $item->quality - $item->quality;
-            }
-        } else {
-            if ($item->quality < 50) {
-                $item->quality = $item->quality + 1;
-            }
+        if ($this->itemIsSulfuras($item)) {
+            return;
         }
+
+        if ($this->itemIsAgedBrie($item)) {
+            if ($item->quality < 50) {
+                $item->quality++;
+            }
+            return;
+        }
+
+        if ($this->itemIsBackstagePass($item)) {
+            $item->quality = 0;
+            return;
+        }
+
+        $this->applyQualityReductions($item);
     }
 }
