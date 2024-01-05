@@ -18,10 +18,15 @@ final class GildedRose
     public function updateQuality(): void
     {
         foreach ($this->items as $item) {
-            $this->applyQualityIncreases($item);
             $this->updateItemSellIn($item);
-            $this->applyQualityReductions($item);
+            $this->updateItemQuality($item);
         }
+    }
+
+    public function updateItemQuality(Item $item): void
+    {
+        $this->applyQualityIncreases($item);
+        $this->applyQualityReductions($item);
     }
 
     private function applyQualityIncreases(Item $item): void
@@ -36,11 +41,11 @@ final class GildedRose
         }
 
         if ($this->itemIsBackstagePass($item)) {
-            $item->quality = $item->quality + 1;
-            if ($item->sellIn < 11) {
+            $item->quality++;
+            if ($item->sellIn < 10) {
                 $item->quality++;
             }
-            if ($item->sellIn < 6) {
+            if ($item->sellIn < 5) {
                 $item->quality++;
             }
         }
@@ -68,14 +73,14 @@ final class GildedRose
 
     private function applyQualityReductions(Item $item): void
     {
+        if ($this->itemIsAgedBrie($item) || $this->itemIsSulfuras($item)) {
+            return;
+        }
+
         $itemPastSellByDate = $this->itemIsPastSellDate($item);
 
         if ($this->itemIsBackstagePass($item)) {
             $item->quality = $itemPastSellByDate ? 0 : $item->quality;
-            return;
-        }
-
-        if ($this->itemIsAgedBrie($item) || $this->itemIsSulfuras($item) || $this->itemIsBackstagePass($item)) {
             return;
         }
 
