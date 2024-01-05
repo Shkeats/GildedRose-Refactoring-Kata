@@ -65,24 +65,22 @@ final class GildedRose
 
     private function applyQualityIncreases(Item $item): void
     {
-        if ($this->itemIsAgedBrie($item) || $this->itemIsBackstagePass($item)) {
-            if ($item->quality >= 50) {
-                return;
-            }
+        if ($item->quality >= 50) {
+            return;
+        }
 
+        if ($this->itemIsAgedBrie($item)) {
+            $item->quality++;
+            return;
+        }
+
+        if ($this->itemIsBackstagePass($item)) {
             $item->quality = $item->quality + 1;
-
-            if ($this->itemIsBackstagePass($item)) {
-                if ($item->sellIn < 11) {
-                    if ($item->quality < 50) {
-                        $item->quality = $item->quality + 1;
-                    }
-                }
-                if ($item->sellIn < 6) {
-                    if ($item->quality < 50) {
-                        $item->quality = $item->quality + 1;
-                    }
-                }
+            if ($item->sellIn < 11) {
+                $item->quality++;
+            }
+            if ($item->sellIn < 6) {
+                $item->quality++;
             }
         }
     }
