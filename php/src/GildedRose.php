@@ -51,12 +51,11 @@ final class GildedRose
         }
 
         if ($this->itemIsBackstagePass($item)) {
-            $qualityIncrease = match (true) {
+            $item->quality += match (true) {
                 $item->sellIn < 5 => 3,
                 $item->sellIn < 10 => 2,
                 default => 1
             };
-            $item->quality += $qualityIncrease;
         }
     }
 
