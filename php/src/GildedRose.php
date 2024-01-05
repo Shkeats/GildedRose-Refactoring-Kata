@@ -25,7 +25,10 @@ final class GildedRose
 
     private function updateItemSellIn(Item $item): void
     {
-        $item->sellIn = $this->itemIsSulfuras($item) ? $item->sellIn : $item->sellIn - 1;
+        if ($this->itemIsSulfuras($item)) {
+            return;
+        }
+        $item->sellIn--;
     }
 
     private function itemIsSulfuras(Item $item): bool
@@ -99,6 +102,6 @@ final class GildedRose
 
     private function itemIsConjured(Item $item): bool
     {
-        return str_contains($item->name, 'Conjured');
+        return str_contains(strtolower($item->name), 'conjured');
     }
 }

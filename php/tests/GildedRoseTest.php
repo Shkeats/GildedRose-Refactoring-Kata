@@ -237,7 +237,7 @@ class GildedRoseTest extends TestCase
     {
         $items = [
             new Item('Conjured Potato', 1, 10),
-            new Item('Gold Ring (Conjured)', 1, 50),
+            new Item('Gold Ring (conjured)', 1, 50),
         ];
 
         $gildedRose = new GildedRose($items);
