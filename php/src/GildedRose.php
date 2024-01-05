@@ -23,6 +23,16 @@ final class GildedRose
         }
     }
 
+    private function updateItemSellIn(Item $item): void
+    {
+        $item->sellIn = $this->itemIsSulfuras($item) ? $item->sellIn : $item->sellIn - 1;
+    }
+
+    private function itemIsSulfuras(Item $item): bool
+    {
+        return $item->name === 'Sulfuras, Hand of Ragnaros';
+    }
+
     public function updateItemQuality(Item $item): void
     {
         $this->applyQualityIncreases($item);
@@ -41,13 +51,12 @@ final class GildedRose
         }
 
         if ($this->itemIsBackstagePass($item)) {
-            $item->quality++;
-            if ($item->sellIn < 10) {
-                $item->quality++;
-            }
-            if ($item->sellIn < 5) {
-                $item->quality++;
-            }
+            $qualityIncrease = match (true) {
+                $item->sellIn < 5 => 3,
+                $item->sellIn < 10 => 2,
+                default => 1
+            };
+            $item->quality += $qualityIncrease;
         }
     }
 
@@ -59,16 +68,6 @@ final class GildedRose
     private function itemIsBackstagePass(Item $item): bool
     {
         return $item->name === 'Backstage passes to a TAFKAL80ETC concert';
-    }
-
-    private function updateItemSellIn(Item $item): void
-    {
-        $item->sellIn = $this->itemIsSulfuras($item) ? $item->sellIn : $item->sellIn - 1;
-    }
-
-    private function itemIsSulfuras(Item $item): bool
-    {
-        return $item->name === 'Sulfuras, Hand of Ragnaros';
     }
 
     private function applyQualityReductions(Item $item): void
