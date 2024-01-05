@@ -22,23 +22,8 @@ final class GildedRose
             $this->applyQualityIncreases($item);
             $this->updateItemSellIn($item);
 
-            //Item is now past sellIn.
-            if ($item->sellIn < 0) {
-                if (!$this->itemIsAgedBrie($item)) {
-                    if (!$this->itemIsBackstagePass($item)) {
-                        if ($item->quality > 0) {
-                            if (!$this->itemIsSulfuras($item)) {
-                                $this->applyQualityReductions($item);
-                            }
-                        }
-                    } else {
-                        $item->quality = $item->quality - $item->quality;
-                    }
-                } else {
-                    if ($item->quality < 50) {
-                        $item->quality = $item->quality + 1;
-                    }
-                }
+            if ($this->itemIsPastSellDate($item)) {
+                $this->handleItemPastSellDate($item);
             }
         }
     }
@@ -105,5 +90,29 @@ final class GildedRose
     private function updateItemSellIn(Item $item): void
     {
         $item->sellIn = $this->itemIsSulfuras($item) ? $item->sellIn : $item->sellIn - 1;
+    }
+
+    private function itemIsPastSellDate(Item $item): bool
+    {
+        return $item->sellIn < 0;
+    }
+
+    private function handleItemPastSellDate(Item $item): void
+    {
+        if (!$this->itemIsAgedBrie($item)) {
+            if (!$this->itemIsBackstagePass($item)) {
+                if ($item->quality > 0) {
+                    if (!$this->itemIsSulfuras($item)) {
+                        $this->applyQualityReductions($item);
+                    }
+                }
+            } else {
+                $item->quality = $item->quality - $item->quality;
+            }
+        } else {
+            if ($item->quality < 50) {
+                $item->quality = $item->quality + 1;
+            }
+        }
     }
 }
