@@ -9,9 +9,7 @@ final class GildedRose
     /**
      * @param Item[] $items
      */
-    public function __construct(
-        private array $items
-    )
+    public function __construct(private array $items)
     {
     }
 
@@ -29,11 +27,6 @@ final class GildedRose
             return;
         }
         $item->sellIn--;
-    }
-
-    private function itemIsSulfuras(Item $item): bool
-    {
-        return $item->name === 'Sulfuras, Hand of Ragnaros';
     }
 
     public function updateItemQuality(Item $item): void
@@ -62,6 +55,29 @@ final class GildedRose
         }
     }
 
+    private function applyQualityReductions(Item $item): void
+    {
+        if ($this->itemIsAgedBrie($item) || $this->itemIsSulfuras($item)) {
+            return;
+        }
+
+        $itemIsPastSellByDate = $this->itemIsPastSellDate($item);
+
+        if ($this->itemIsBackstagePass($item)) {
+            $item->quality = $itemIsPastSellByDate ? 0 : $item->quality;
+            return;
+        }
+
+        $qualityDecrease = $this->itemIsConjured($item) ? 2 : 1;
+
+        if ($itemIsPastSellByDate) {
+            $qualityDecrease = $qualityDecrease * 2;
+        }
+
+        $newQuality = $item->quality - $qualityDecrease;
+        $item->quality = max($newQuality, 0);
+    }
+
     private function itemIsAgedBrie(Item $item): bool
     {
         return $item->name === 'Aged Brie';
@@ -72,27 +88,9 @@ final class GildedRose
         return $item->name === 'Backstage passes to a TAFKAL80ETC concert';
     }
 
-    private function applyQualityReductions(Item $item): void
+    private function itemIsSulfuras(Item $item): bool
     {
-        if ($this->itemIsAgedBrie($item) || $this->itemIsSulfuras($item)) {
-            return;
-        }
-
-        $itemPastSellByDate = $this->itemIsPastSellDate($item);
-
-        if ($this->itemIsBackstagePass($item)) {
-            $item->quality = $itemPastSellByDate ? 0 : $item->quality;
-            return;
-        }
-
-        $qualityDecrease = $this->itemIsConjured($item) ? 2 : 1;
-
-        if ($itemPastSellByDate) {
-            $qualityDecrease = $qualityDecrease * 2;
-        }
-
-        $newQuality = $item->quality - $qualityDecrease;
-        $item->quality = max($newQuality, 0);
+        return $item->name === 'Sulfuras, Hand of Ragnaros';
     }
 
     private function itemIsPastSellDate(Item $item): bool

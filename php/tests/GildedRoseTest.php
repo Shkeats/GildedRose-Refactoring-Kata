@@ -30,12 +30,10 @@ class GildedRoseTest extends TestCase
 
     public function test_that_the_quality_of_an_item_is_never_negative()
     {
-        $this->markTestSkipped('Domain rule not enforced for bad input Item');
         $items = [new Item('foo', 5, -4)];
         $gildedRose = new GildedRose($items);
         $gildedRose->updateQuality();
-        //Still -4
-        $this->assertSame(9, $items[0]->quality);
+        $this->assertSame(0, $items[0]->quality);
     }
 
     public function test_that_the_quality_of_an_item_cannot_become_negative()
